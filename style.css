@@ -1,0 +1,659 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+
+    background:
+        radial-gradient(circle at center, #3a3025 0%, #17130f 75%);
+
+    color: #2c2117;
+
+    font-family: "IM Fell English", serif;
+
+    overflow: hidden;
+}
+
+
+/* =========================
+   ESCENA
+========================= */
+
+.scene {
+    width: 100%;
+    height: 100dvh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: relative;
+
+    padding: 20px;
+}
+
+
+/* =========================
+   SOBRE
+========================= */
+
+.envelope-container {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    text-align: center;
+
+    transition:
+        opacity 0.6s ease,
+        transform 0.6s ease;
+}
+
+.envelope-container.hidden {
+    opacity: 0;
+    transform: scale(0.8);
+
+    pointer-events: none;
+}
+
+
+/* =========================
+   SOBRE FÍSICO
+========================= */
+
+.envelope {
+    width: min(430px, 88vw);
+    aspect-ratio: 430 / 280;
+
+    position: relative;
+
+    cursor: pointer;
+
+    filter:
+        drop-shadow(0 25px 20px rgba(0, 0, 0, 0.5));
+
+    perspective: 1000px;
+
+    /* Evita selección accidental */
+    user-select: none;
+    -webkit-user-select: none;
+
+    touch-action: manipulation;
+}
+
+
+/* Parte trasera */
+
+.envelope-back {
+    position: absolute;
+
+    inset: 0;
+
+    background: #8b6544;
+
+    border-radius: 4px;
+
+    box-shadow:
+        inset 0 0 30px rgba(0, 0, 0, 0.25);
+}
+
+
+/* Carta que se ve dentro */
+
+.letter-preview {
+    position: absolute;
+
+    width: 84%;
+    height: 82%;
+
+    left: 8%;
+    top: 7%;
+
+    background: #d8c08d;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    padding-top: 9%;
+
+    font-family: "Cinzel", serif;
+
+    font-size: clamp(14px, 4vw, 18px);
+
+    box-shadow:
+        0 3px 8px rgba(0, 0, 0, 0.3);
+
+    transition: transform 0.7s ease;
+}
+
+
+/* Frente */
+
+.envelope-front {
+    position: absolute;
+
+    left: 0;
+    bottom: 0;
+
+    width: 100%;
+    height: 70%;
+
+    background: #765337;
+
+    clip-path: polygon(
+        0 0,
+        50% 65%,
+        100% 0,
+        100% 100%,
+        0 100%
+    );
+
+    z-index: 3;
+}
+
+
+/* Solapa */
+
+.flap {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 60%;
+
+    background: #9b754e;
+
+    clip-path: polygon(
+        0 0,
+        100% 0,
+        50% 100%
+    );
+
+    transform-origin: top;
+
+    transition:
+        transform 0.8s ease;
+
+    z-index: 4;
+}
+
+
+/* =========================
+   SELLO DE CERA
+========================= */
+
+.wax-seal {
+    position: absolute;
+
+    width: clamp(58px, 16vw, 70px);
+    height: clamp(58px, 16vw, 70px);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 35% 30%,
+            #b03b2e,
+            #651b17 70%
+        );
+
+    color: #d9a28d;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-family: "Cinzel", serif;
+
+    font-size: clamp(21px, 6vw, 25px);
+
+    border: 4px solid #541613;
+
+    left: 50%;
+    top: 55%;
+
+    transform: translate(-50%, -50%);
+
+    z-index: 5;
+
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.4);
+
+    transition:
+        transform 0.3s ease,
+        opacity 0.4s ease;
+
+    /* Importante para touch */
+    touch-action: manipulation;
+}
+
+.wax-seal:hover {
+    transform:
+        translate(-50%, -50%)
+        scale(1.08);
+}
+
+
+/* =========================
+   INSTRUCCIÓN
+========================= */
+
+.instruction {
+    margin-top: clamp(18px, 4vw, 25px);
+
+    color: #c9b99f;
+
+    font-family: "Cinzel", serif;
+
+    font-size: clamp(11px, 3.5vw, 14px);
+
+    letter-spacing: clamp(1px, 0.5vw, 2px);
+
+    opacity: 0.8;
+}
+
+
+/* =========================
+   CONTENEDOR DE CARTA
+========================= */
+
+.letter-container {
+    position: absolute;
+
+    width: min(850px, calc(100vw - 24px));
+    height: min(90vh, calc(100dvh - 24px));
+
+    opacity: 0;
+
+    transform:
+        scale(0.7)
+        translateY(50px);
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.7s ease,
+        transform 0.7s ease;
+}
+
+.letter-container.visible {
+    opacity: 1;
+
+    transform:
+        scale(1)
+        translateY(0);
+
+    pointer-events: auto;
+}
+
+
+/* =========================
+   PAPEL
+========================= */
+
+.paper {
+    width: 100%;
+    height: 100%;
+
+    position: relative;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            #f0dfae 0%,
+            #ddc58f 65%,
+            #bda06b 100%
+        );
+
+    border: 1px solid #a98b5c;
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.6);
+
+    transform: rotate(-0.3deg);
+}
+
+
+/* Textura del papel */
+
+.paper::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    opacity: 0.15;
+
+    background-image:
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 3px,
+            rgba(80, 50, 20, 0.15) 4px
+        );
+
+    pointer-events: none;
+
+    z-index: 0;
+}
+
+
+/* =========================
+   CONTENIDO
+========================= */
+
+.letter-content {
+    width: 100%;
+    height: 100%;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    position: relative;
+
+    z-index: 1;
+
+    padding:
+        clamp(60px, 10vw, 70px)
+        clamp(25px, 8vw, 85px);
+
+    font-size: clamp(16px, 2.3vw, 19px);
+
+    line-height: 1.75;
+
+    text-align: justify;
+
+    /*
+       Scroll más cómodo en móviles
+    */
+    -webkit-overflow-scrolling: touch;
+
+    /*
+       Permite solamente scroll vertical
+    */
+    touch-action: pan-y;
+}
+
+
+/* Título */
+
+.letter-content h1 {
+    font-size: clamp(24px, 5vw, 29px);
+
+    margin-top: 0;
+
+    margin-bottom: 25px;
+
+    font-weight: normal;
+
+    font-style: italic;
+}
+
+
+/* Párrafos */
+
+.letter-content p {
+    margin: 0 0 22px;
+}
+
+
+/* Firma */
+
+.signature {
+    text-align: right;
+
+    font-size: clamp(20px, 5vw, 24px);
+
+    font-style: italic;
+
+    margin-top: 40px;
+
+    padding-bottom: 30px;
+}
+
+
+/* =========================
+   BOTÓN CERRAR
+========================= */
+
+.close-button {
+    position: absolute;
+
+    top: 12px;
+    right: 12px;
+
+    z-index: 10;
+
+    border: 1px solid #6f5435;
+
+    background: rgba(88, 61, 35, 0.94);
+
+    color: #ead9ad;
+
+    padding:
+        10px
+        15px;
+
+    min-height: 42px;
+
+    font-family: "Cinzel", serif;
+
+    font-size: 12px;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    border-radius: 2px;
+
+    transition:
+        background 0.25s ease,
+        transform 0.25s ease;
+
+    touch-action: manipulation;
+}
+
+.close-button:hover {
+    background: #4d3420;
+
+    transform: scale(1.05);
+}
+
+.close-button:active {
+    transform: scale(0.96);
+}
+
+
+/* =========================
+   SCROLLBAR
+========================= */
+
+.letter-content::-webkit-scrollbar {
+    width: 7px;
+}
+
+.letter-content::-webkit-scrollbar-track {
+    background: rgba(70, 45, 20, 0.12);
+}
+
+.letter-content::-webkit-scrollbar-thumb {
+    background: #80623e;
+
+    border-radius: 10px;
+}
+
+
+/* =========================
+   TABLETS
+========================= */
+
+@media (max-width: 768px) {
+
+    .scene {
+        padding: 12px;
+    }
+
+    .letter-container {
+        width: calc(100vw - 20px);
+        height: calc(100dvh - 20px);
+    }
+
+    .letter-content {
+        padding:
+            65px
+            35px
+            40px;
+    }
+}
+
+
+/* =========================
+   CELULARES
+========================= */
+
+@media (max-width: 480px) {
+
+    .scene {
+        padding: 10px;
+    }
+
+    .envelope {
+        width: 88vw;
+    }
+
+    .instruction {
+        max-width: 280px;
+
+        line-height: 1.5;
+    }
+
+    .letter-container {
+        width: calc(100vw - 14px);
+        height: calc(100dvh - 14px);
+    }
+
+    .paper {
+        border-radius: 2px;
+    }
+
+    .letter-content {
+
+        padding:
+            65px
+            24px
+            35px;
+
+        font-size: 17px;
+
+        line-height: 1.7;
+
+        text-align: left;
+    }
+
+    .letter-content h1 {
+        font-size: 25px;
+    }
+
+    .letter-content p {
+        margin-bottom: 20px;
+    }
+
+    .close-button {
+        top: 9px;
+        right: 9px;
+
+        min-height: 44px;
+
+        padding:
+            9px
+            13px;
+
+        font-size: 11px;
+    }
+}
+
+
+/* =========================
+   CELULAR MUY PEQUEÑO
+========================= */
+
+@media (max-width: 360px) {
+
+    .letter-content {
+        padding:
+            60px
+            19px
+            30px;
+
+        font-size: 16px;
+
+        line-height: 1.65;
+    }
+
+    .letter-content h1 {
+        font-size: 23px;
+    }
+
+}
+
+
+/* =========================
+   MODO HORIZONTAL
+========================= */
+
+@media (max-height: 500px) and (orientation: landscape) {
+
+    .letter-container {
+        height: calc(100dvh - 12px);
+        width: calc(100vw - 20px);
+    }
+
+    .letter-content {
+        padding:
+            55px
+            45px
+            30px;
+
+        font-size: 16px;
+    }
+
+    .envelope {
+        width: 300px;
+    }
+
+    .instruction {
+        display: none;
+    }
+}
+
+
+/* =========================
+   DISPOSITIVOS TÁCTILES
+========================= */
+
+@media (hover: none) and (pointer: coarse) {
+
+    .wax-seal:hover {
+        transform:
+            translate(-50%, -50%);
+    }
+
+    .wax-seal:active {
+        transform:
+            translate(-50%, -50%)
+            scale(0.92);
+    }
+
+}
